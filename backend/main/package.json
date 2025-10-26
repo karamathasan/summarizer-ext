@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.0",
+    "@grpc/proto-loader": "^0.8.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "pg": "^8.16.3"
+  },
+  "scripts": {
+    "proto:gen": "proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=proto/greeter.proto",
+    "start": "node server.js"
+  },
+  "name": "main",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}
