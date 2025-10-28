@@ -3,19 +3,45 @@ import grpc from '@grpc/grpc-js';
 import protoLoader from '@grpc/proto-loader';
 import path from 'path';
 
-// Load the .proto definition
 const PROTO_PATH = path.resolve('./greeter.proto');
 const packageDefinition = protoLoader.loadSync(PROTO_PATH);
 const greeterProto = grpc.loadPackageDefinition(packageDefinition).greeter;
 
-// Create a client connected to the server
-const client = new greeterProto.Greeter('localhost:50051', grpc.credentials.createInsecure());
+// Define the service method
+function sayHello(call, callback) {
+  const name = call.request.name;
+  callback(null, { message: `wsg, ${name}!` });
+}
 
-// Make a request
-client.SayHello({ name: 'Karamat' }, (error, response) => {
-  if (error) {
-    console.error('Error:', error);
-  } else {
-    console.log('Greeting:', response.message);
-  }
+// Start the gRPC server
+const grpcServer = new grpc.Server();
+grpcServer.addService(greeterProto.Greeter.service, { SayHello: sayHello });
+grpcServer.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(), () => {
+    console.log('gRPC server running on port 50051');
 });
+
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'summarizerDB',
+  password: '2463',
+  port: 5432,
+});
+
+// async function getUsers() {
+//   try {
+//     const res = await pool.query('SELECT * FROM users');
+//     console.log(res.rows);
+//   } catch (err) {
+//     console.error('Error executing query', err.stack);
+//   }
+// }
+
+async function addUser(){
+  try {
+    const res = await pool.query('INSERT INTO users');
+    console.log(res.rows);
+  } catch (err) {
+    console.error('Error executing query', err.stack);
+  }
+}
